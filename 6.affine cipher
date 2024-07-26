@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+int modInverse(int a, int m) {
+    a = a % m;
+    for (int x = 1; x < m; x++) {
+        if ((a * x) % m == 1) {
+            return x;
+        }
+    }
+    return -1;
+}
+void affineDecrypt(char* ciphertext, int a, int b, char* plaintext) {
+    int a_inv = modInverse(a, 26);  
+    for (int i = 0; i < strlen(ciphertext); i++) {
+        char c = ciphertext[i];
+        if (isalpha(c)) {
+            char offset = isupper(c) ? 'A' : 'a';
+            int decrypted_char = (a_inv * ((c - offset - b + 26) % 26)) % 26;
+            plaintext[i] = decrypted_char + offset;
+        } else {
+            plaintext[i] = c;
+        }
+    }
+    plaintext[strlen(ciphertext)] = '\0'; 
+}
+int main() {
+    char ciphertext[1000];
+    printf("Enter the ciphertext: ");
+    fgets(ciphertext, sizeof(ciphertext), stdin);
+    ciphertext[strcspn(ciphertext, "\n")] = '\0'; 
+    char cipherMostFreq = 'B';
+    char cipherSecondFreq = 'U';
+    char plainMostFreq = 'E';
+    char plainSecondFreq = 'T';
+    int cipherMostFreqVal = cipherMostFreq - 'A';
+    int cipherSecondFreqVal = cipherSecondFreq - 'A';
+    int plainMostFreqVal = plainMostFreq - 'A';
+    int plainSecondFreqVal = plainSecondFreq - 'A';
+    int a, b;
+    int num1 = (cipherSecondFreqVal - cipherMostFreqVal + 26) % 26;
+    int num2 = (plainSecondFreqVal - plainMostFreqVal + 26) % 26;
+    a = (num1 * modInverse(num2, 26)) % 26;
+    b = (cipherMostFreqVal - a * plainMostFreqVal + 26 * 26) % 26;
+    char plaintext[1000];
+    affineDecrypt(ciphertext, a, b, plaintext);
+    printf("Decrypted plaintext: %s\n", plaintext);
+    printf("Key: a = %d, b = %d\n", a, b);
+    return 0;
+}
