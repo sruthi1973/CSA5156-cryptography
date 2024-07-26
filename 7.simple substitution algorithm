@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <string.h>
+void decrypt(char *ciphertext) {
+    char plaintext[1000];
+    int i;
+    char most_common[4] = {'e', 't', 'a', 'o'};
+    for (i = 0; i < strlen(ciphertext); i++) {
+        if (ciphertext[i] == '3') plaintext[i] = 'e'; 
+        else if (ciphertext[i] == '4') plaintext[i] = 't'; 
+        else if (ciphertext[i] == '8') plaintext[i] = 'a'; 
+        else if (ciphertext[i] == '5') plaintext[i] = 'o'; 
+        else if (ciphertext[i] == '6') plaintext[i] = 'h'; 
+        else if (ciphertext[i] == '9') plaintext[i] = 's';
+        else if (ciphertext[i] == '1') plaintext[i] = 'n'; 
+        else if (ciphertext[i] == '0') plaintext[i] = 'r'; 
+        else if (ciphertext[i] == '.') plaintext[i] = 'i'; 
+        else if (ciphertext[i] == '(') plaintext[i] = 'd'; 
+        else if (ciphertext[i] == ';') plaintext[i] = 'l'; 
+        else if (ciphertext[i] == ':') plaintext[i] = 'c'; 
+        else if (ciphertext[i] == '?') plaintext[i] = 'f'; 
+        else if (ciphertext[i] == ']') plaintext[i] = 'm'; 
+        else if (ciphertext[i] == '*') plaintext[i] = 'w'; 
+        else if (ciphertext[i] == '-') plaintext[i] = 'g'; 
+        else if (ciphertext[i] == '2') plaintext[i] = 'u'; 
+        else if (ciphertext[i] == '7') plaintext[i] = 'y'; 
+        else if (ciphertext[i] == '¶') plaintext[i] = 'v'; 
+        else plaintext[i] = ciphertext[i];
+    }
+    plaintext[i] = '\0';
+    printf("Decrypted message: %s\n", plaintext);
+}
+int main() {
+    char ciphertext[] = "53‡‡†305))6*;4826)4‡.)4‡);806*;48†8¶60))85;;]8*;:‡*8†83(88)5*†;46(;88*96*?;8)*‡(;485);5*†2:*‡(;4956*2(5*—4)8¶8*;4069285);)6†8)4‡‡;1(‡9;48081;8:8‡1;48†85;4)485†528806*81 (‡9;48;(88;4(‡?34;48)4‡;161;:188;‡?;";
+    decrypt(ciphertext);
+    return 0;
+}
