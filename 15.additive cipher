@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+const double englishLetterFreq[26] = {
+    0.082, 0.015, 0.028, 0.043, 0.127, 0.022, 0.020, 0.061, 0.070, 0.002,
+    0.008, 0.040, 0.024, 0.067, 0.075, 0.019, 0.001, 0.060, 0.063, 0.091,
+    0.028, 0.010, 0.023, 0.001, 0.020, 0.001
+};
+void decrypt(char *ciphertext, char *plaintext, int key) {
+    int i;
+    for (i = 0; i < strlen(ciphertext); i++) {
+        if (isalpha(ciphertext[i])) {
+            if (isupper(ciphertext[i])) {
+                plaintext[i] = ((ciphertext[i] - 'A' - key + 26) % 26) + 'A';
+            } else {
+                plaintext[i] = ((ciphertext[i] - 'a' - key + 26) % 26) + 'a';
+            }
+        } else {
+            plaintext[i] = ciphertext[i];
+        }
+    }
+    plaintext[i] = '\0';
+}
+double calculateScore(char *plaintext) {
+    int letterCount[26] = {0};
+    int totalLetters = 0;
+    double score = 0.0;
+    for (int i = 0; i < strlen(plaintext); i++) {
+        if (isalpha(plaintext[i])) {
+            if (isupper(plaintext[i])) {
+                letterCount[plaintext[i] - 'A']++;
+            } else {
+                letterCount[plaintext[i] - 'a']++;
+            }
+            totalLetters++;
+        }
+    }
+    for (int i = 0; i < 26; i++) {
+        double frequency = (double)letterCount[i] / totalLetters;
+        score += frequency * englishLetterFreq[i];
+    }
+    return score;
+}
+void sortResults(double scores[], char plaintexts[][1000], int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (scores[j] < scores[j+1]) {
+                double tempScore = scores[j];
+                scores[j] = scores[j+1];
+                scores[j+1] = tempScore;
+                char tempText[1000];
+                strcpy(tempText, plaintexts[j]);
+                strcpy(plaintexts[j], plaintexts[j+1]);
+                strcpy(plaintexts[j+1], tempText);
+            }
+        }
+    }
+}
+int main() {
+    char ciphertext[1000];
+    int numTopPlaintexts;
+    printf("Enter the ciphertext: ");
+    fgets(ciphertext, sizeof(ciphertext), stdin);
+    ciphertext[strcspn(ciphertext, "\n")] = '\0'; 
+    printf("Enter the number of top possible plaintexts to display: ");
+    scanf("%d", &numTopPlaintexts);
+    double scores[26];
+    char plaintexts[26][1000];
+    for (int key = 0; key < 26; key++) {
+        decrypt(ciphertext, plaintexts[key], key);
+        scores[key] = calculateScore(plaintexts[key]);
+    }
+    sortResults(scores, plaintexts, 26);
+    printf("\nTop %d possible plaintexts:\n", numTopPlaintexts);
+    for (int i = 0; i < numTopPlaintexts; i++) {
+        printf("%d. %s (Score: %.4f)\n", i + 1, plaintexts[i], scores[i]);
+    }
+    return 0;
+}
